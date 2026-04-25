@@ -1,0 +1,61 @@
+import swisseph as swe
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+# 🔹 Get real planet positions
+def get_planets(jd):
+    planets = {
+        "Sun": swe.SUN,
+        "Moon": swe.MOON,
+        "Mars": swe.MARS,
+        "Mercury": swe.MERCURY,
+        "Jupiter": swe.JUPITER,
+        "Venus": swe.VENUS,
+        "Saturn": swe.SATURN
+    }
+
+    result = {}
+
+    for name, p in planets.items():
+        pos = swe.calc_ut(jd, p)[0][0]
+        result[name] = {"degree": pos}
+
+    return result
+
+
+# 🔹 Generate KP Chart
+def generate_kp_chart(jd):
+
+    planets = get_planets(jd)
+
+    fig, ax = plt.subplots(figsize=(6,6))
+
+    ax.set_xlim(-1.2, 1.2)
+    ax.set_ylim(-1.2, 1.2)
+
+    # circle
+    circle = plt.Circle((0,0), 1, fill=False)
+    ax.add_artist(circle)
+
+    # 12 house lines
+    for i in range(12):
+        angle = np.deg2rad(i * 30)
+        x = np.cos(angle)
+        y = np.sin(angle)
+        ax.plot([0, x], [0, y], 'gray')
+
+    # planets plotting
+    for planet, data in planets.items():
+        angle = np.deg2rad(data["degree"])
+        x = 0.8 * np.cos(angle)
+        y = 0.8 * np.sin(angle)
+
+        ax.text(x, y, planet, fontsize=9, ha='center')
+
+    ax.axis("off")
+
+    file_path = "kp_chart.png"
+    plt.savefig(file_path)
+
+    return file_path, planets
