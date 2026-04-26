@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Query
 import requests
-import swisseph as swe
+# import swisseph as swe
 
 from fastapi.middleware.cors import CORSMiddleware
 
